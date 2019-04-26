@@ -31,6 +31,8 @@ class Board:
         current_node = Node(None, self.matrix, self, 0)
 
         to_visit = []
+        explored = []
+
         while True:
             moves = self.valid_moves()
             for move in moves:
@@ -39,9 +41,18 @@ class Board:
                 if temp.is_finished():
                     print('Achou !!!!')
                     print('A profundidade é %s' % temp.depth)
-                    return True
+
+                    played = []
+                    while temp.parent:
+                        played.append(temp.matrix)
+                        temp = temp.parent
+
+                    played.reverse()
+
+                    return played
                 else:
-                    to_visit.append(temp)
+                    explored.append(current_node)
+                    if temp not in to_visit and temp not in explored: to_visit.append(temp)
             current_node = to_visit.pop(0)
             self.matrix = current_node.matrix
             self.empty = self.find_empty()
@@ -96,5 +107,14 @@ matrix_end = [
 ]
 
 board = Board(matrix_start, matrix_end)
-board.get_result()
+moves = board.get_result()
+
+print("As jogadas foram !")
+k = 1
+for matrix in moves:
+    print(' # %s #' % k)
+    for i in range(len(matrix)):
+        print('| %s | %s | %s |' % (matrix[i][0], matrix[i][1], matrix[i][2]))
+    print('')
+    k += 1
 # board.a_star()
