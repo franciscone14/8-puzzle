@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Adicionar a escolha do tempo de espera em passos ou se o usuario tem tempo para esperar achar a resposta
+# Mostra a escolha do melhor metodo
 
 import copy
 
