@@ -3,7 +3,7 @@
 
 import copy
 
-class Board:
+class BuscaAmplitude:
 
     def __init__(self, matrix, goal):
         self.matrix = matrix
@@ -29,33 +29,45 @@ class Board:
 
     def get_result(self):
         current_node = Node(None, self.matrix, self, 0)
-
         to_visit = []
         explored = []
 
-        while True:
-            moves = self.valid_moves()
-            for move in moves:
-                temp = Node(current_node, self.make_move(move), self, current_node.depth + 1)
-                # print(temp.matrix)
-                if temp.is_finished():
-                    print('Achou !!!!')
-                    print('A profundidade é %s' % temp.depth)
+        to_visit.append(current_node)
 
-                    played = []
-                    while temp.parent:
-                        played.append(temp.matrix)
-                        temp = temp.parent
-
-                    played.reverse()
-
-                    return played
-                else:
-                    explored.append(current_node)
-                    if temp not in to_visit and temp not in explored: to_visit.append(temp)
+        while len(to_visit) > 0:
             current_node = to_visit.pop(0)
             self.matrix = current_node.matrix
             self.empty = self.find_empty()
+
+            if current_node.h1() == 0:
+                print("Parabens gamba, voce ganhou !")
+                return
+    
+            moves = self.valid_moves()
+            
+            # Expande o node atual verificando todos os filhos
+            children = []
+            for move in moves:
+                children.append(Node(current_node, self.make_move(move), self, current_node.depth + 1))
+
+            for son in children:
+                if son.matrix in explored:
+                    print("Removed")
+                    children.remove(son)
+                
+            # Verifica meu menor h
+            h = 9
+            for son in children:
+                print(son.matrix)
+                if son.h1() < h:
+                    h = son.h1()
+            
+            for son in children:
+                if son.h1() == h:
+                    to_visit.append(son)
+            
+            explored.append(current_node.matrix)
+            
 
     def make_move(self, move):
         x, y = self.empty
@@ -75,23 +87,14 @@ class Node:
         self.matrix = matrix
         self.board = board
         self.depth = depth
-    
-    def get_similarity(self):
-        # print("LEN: ")
-        # print(len(self.matrix))
-        # print(len(self.matrix[1]))
-        g = 0
-        for i in range(len(self.matrix)):
-            # print("I: %s" % str(i))
-            for j in range(len(self.matrix[i])):
-                if self.matrix[i][j] == self.board.goal[i][j] and self.matrix[i][j] != 0:
-                    # print(g)
-                    g += 1
-        
-        return 7 - g
 
-    def is_finished(self):
-        return self.matrix == self.board.goal
+    def h1(self):
+        h1 = 0
+        for i in range(len(self.matrix)):
+            for j in range(len(self.matrix[i])):
+                if(self.matrix[i][j] != self.board.goal[i][j]):
+                    h1 += 1
+        return h1
     
 
 matrix_start = [
@@ -106,15 +109,15 @@ matrix_end = [
     [7,6,5]
 ]
 
-board = Board(matrix_start, matrix_end)
+board = BuscaAmplitude(matrix_start, matrix_end)
 moves = board.get_result()
 
-print("As jogadas foram !")
-k = 1
-for matrix in moves:
-    print(' # %s #' % k)
-    for i in range(len(matrix)):
-        print('| %s | %s | %s |' % (matrix[i][0], matrix[i][1], matrix[i][2]))
-    print('')
-    k += 1
+# print("As jogadas foram !")
+# k = 1
+# for matrix in moves:
+#     print(' # %s #' % k)
+#     for i in range(len(matrix)):
+#         print('| %s | %s | %s |' % (matrix[i][0], matrix[i][1], matrix[i][2]))
+#     print('')
+#     k += 1
 # board.a_star()
