@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Adicionar a escolha do tempo de espera em passos ou se o usuario tem tempo para esperar achar a resposta
+# Mostra a escolha do melhor metodo
+# Distancia de manhatan ou a proximidade da solução (Ou os dois no caso da A*)
 
 import copy
 
