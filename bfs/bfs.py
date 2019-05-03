@@ -3,12 +3,16 @@
 
 import copy
 
-class BuscaAmplitude:
+class BFS:
 
-    def __init__(self, matrix, goal):
+    def __init__(self, matrix, goal, max_plays=None, max_time = None, start_time=None):
         self.matrix = matrix
         self.start = copy.deepcopy(matrix)
         self.goal = goal
+        self.max_plays = max_plays
+        self.max_time = max_time
+        self.start_time = start_time
+
         self.empty = self.find_empty()
 
     def find_empty(self):
@@ -39,7 +43,31 @@ class BuscaAmplitude:
                 temp = Node(current_node, self.make_move(move), self, current_node.depth + 1)
                 # print(temp.matrix)
                 if temp.is_finished():
-                    print('Achou !!!!')
+                    print('Parabens, sua resposta foi encontrada :)')
+                    print('O numero de passos foi %s' % temp.depth)
+
+                    played = []
+                    while temp.parent:
+                        played.append(temp.matrix)
+                        temp = temp.parent
+
+                    played.reverse()
+
+                    return played
+                elif (self.max_plays != None) and self.max_plays < temp.depth:
+                    print("Não consegui achar uma resposta nesse tempo :(")
+                    print('O numero de passos foi %s' % temp.depth)
+
+                    played = []
+                    while temp.parent:
+                        played.append(temp.matrix)
+                        temp = temp.parent
+
+                    played.reverse()
+
+                    return played
+                elif (self.max_time != None) and self.max_time < (self.start_time - time.time()):
+                    print("Não consegui achar uma resposta nesse tempo :(")
                     print('O numero de passos foi %s' % temp.depth)
 
                     played = []
